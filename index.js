@@ -3,7 +3,7 @@ const http = require('http')
 const https = require('https')
 const url = require('url')
 const StringDecoder = require('string_decoder').StringDecoder
-const config = require('./config')
+const config = require('./lib/config')
 const fs = require('fs');
 const handlers = require('./lib/handlers')
 const helpers = require('./lib/helpers')
@@ -62,25 +62,20 @@ const unifiedServer = function(req, res) {
   //get the req path
 
   const path = parsedUrl.pathname
-  console.log(path)
   const trimmedPath = path.replace(/^\/+|\/+$/g, '')
-  console.log(trimmedPath)
 
 
   //get the http method
 
   const method = req.method.toLowerCase()
-  console.log("method received is " + method)
 
   //get the headers as an object
 
   const headers = req.headers
-  console.log("headers received are ", headers)
 
   //get the query params as object
 
   const queryStringObject = parsedUrl.query
-  console.log('query received is', queryStringObject)
 
   //get the payload if any
   //payload coming to http server usually come in streams
@@ -116,19 +111,12 @@ const unifiedServer = function(req, res) {
       //use the status code callled by handler
       statusCode = typeof(statusCode) == 'number' ? statusCode : 200
 
-
-      //use the payload called by handler
-
-      console.log("++++++++", payload)
-      payload = typeof(payload) == 'string' ? payload : {}
-
-
       //convert Payload to string
+      payload= typeof(payload)=='object'?payload:{}
 
       const payloadString = JSON.stringify(payload)
-
       //return the response
-      res.setHeader('Content-Type', 'application/json')
+      res.setHeader('Content-Type','application/json')
       res.writeHead(statusCode)
       res.end(payloadString)
 
